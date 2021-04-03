@@ -104,6 +104,26 @@ class Validator {
         });
       }
     }
+
+    if (this.isExist(schema.contains) && !dataToValidate.includes(schema.contains)) {
+      this.fail('Must contain a value, but does not');
+    }
+    
+    if (this.isExist(schema.uniqueItems)) {
+      const unique = [];
+      for(let i = 0; i < dataToValidate.length; i++) {
+        const element = typeof dataToValidate[i] === 'object' ? 
+          dataToValidate[i].toString() : 
+          dataToValidate[i];
+
+        if (unique.includes(element)) {
+          this.fail('Elements of array not unique');
+          break;
+        } else {
+          unique.push(dataToValidate[i]);
+        }
+      }
+    }
   }
 
   fail (error) {
