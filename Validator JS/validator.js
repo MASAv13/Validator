@@ -113,16 +113,36 @@ class Validator {
       const unique = [];
       for(let i = 0; i < dataToValidate.length; i++) {
         const element = typeof dataToValidate[i] === 'object' ? 
-          dataToValidate[i].toString() : 
+          JSON.stringify(dataToValidate[i]) :
           dataToValidate[i];
 
         if (unique.includes(element)) {
           this.fail('Elements of array not unique');
           break;
         } else {
-          unique.push(dataToValidate[i]);
+          unique.push(element);
         }
       }
+    }
+
+    if (this.isExist(schema.enum)) {
+      let isDataInEnum = false;
+      for(let i = 0; i < schema.enum.length; i++) {
+        const element = typeof schema.enum[i] === 'object' ?
+          JSON.stringify(schema.enum[i]) :
+          schema.enum[i];
+        const data = typeof dataToValidate === 'object' ?    
+          JSON.stringify(dataToValidate) :
+          dataToValidate;
+
+        if (element === data) {
+          isDataInEnum = true;
+        }
+      }
+      if (!isDataInEnum) {
+        this.fail('The enum does not support one of array elements');
+      }
+      
     }
   }
 
