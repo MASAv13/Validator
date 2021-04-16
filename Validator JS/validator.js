@@ -22,7 +22,11 @@ class Validator {
   }
 
   isArray(data) {
-    return Object.prototype.toString.call(data) === '[object Array]'
+    return Object.prototype.toString.call(data) === '[object Array]';
+  }
+
+  isObject(data) {
+    return Object.prototype.toString.call(data) === '[object Object]';
   }
 
   checkNumber(schema, dataToValidate) {
@@ -142,8 +146,21 @@ class Validator {
       if (!isDataInEnum) {
         this.fail('The enum does not support one of array elements');
       }
-      
     }
+  }
+  
+  checkObject(schema, dataToValidate) {
+    if (!this.isObject(dataToValidate)) {
+      this.fail ('Type is incorrect');
+    }
+
+    if (this.isExist(schema.maxProperties) && Object.keys(dataToValidate).length > schema.maxProperties) {
+      this.fail ('Too many properties in object');
+    }
+
+    // if (this.isExist(schema.minProperties) && Object.keys(dataToValidate).lenght < schema.minProperties) {
+    //   this.fail ('Too few properties in object');
+    // }
   }
 
   fail (error) {
@@ -184,9 +201,12 @@ class Validator {
       if (schema.type === 'array') {
         this.checkMassive(schema, dataToValidate);
       }
+      
+      if (schema.type === 'object') {
+        this.checkObject(schema, dataToValidate);
+      }
     }
 
     return !this._failed;
   }
-
 }
