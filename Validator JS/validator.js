@@ -158,9 +158,18 @@ class Validator {
       this.fail ('Too many properties in object');
     }
 
-    // if (this.isExist(schema.minProperties) && Object.keys(dataToValidate).lenght < schema.minProperties) {
-    //   this.fail ('Too few properties in object');
-    // }
+    if (this.isExist(schema.minProperties) && Object.keys(dataToValidate).length < schema.minProperties) {
+      this.fail ('Too few properties in object');
+    }
+
+    if (this.isExist(schema.required)) {
+      for (let i = 0; i < schema.required.length; i++) {
+        if (dataToValidate[schema.required[i]] === undefined) {
+          this.fail ('Property required, but value is undefined');
+          break;
+        }
+      }
+    }
   }
 
   fail (error) {
